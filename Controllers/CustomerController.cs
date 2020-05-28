@@ -29,7 +29,7 @@ namespace BIpower.Controllers
             return Ok(customers);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCustomer")]
         public IActionResult GetCustomer(int id)
         {
 
