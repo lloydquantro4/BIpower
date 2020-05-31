@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using BIpower.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using BIpower.Services;
 
 namespace BIpower.Controllers
 {
@@ -9,10 +11,12 @@ namespace BIpower.Controllers
     public class OrderController : Controller
     {
         private readonly biContext _db;
-        public OrderController(biContext db)
+        private readonly IMailer _mailer;
+        public OrderController(biContext db, IMailer mailer)
         {
 
             _db = db;
+            _mailer =mailer;
 
         }
         [HttpGet("{pageNumber:int}/{pageSize:int}")]
@@ -88,6 +92,7 @@ namespace BIpower.Controllers
             }
             _db.Orders.Add(order);
             _db.SaveChanges();
+            _mailer.Send(order.Customer.Email,"New Order", "You have placed a new order");
 
             return CreatedAtRoute("GetOrder", new { id = order.id }, order);
         }

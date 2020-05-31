@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using BIpower.Models;
 using Microsoft.EntityFrameworkCore;
+using BIpower.Services;
 
 namespace BIpower
 {
@@ -30,6 +31,7 @@ namespace BIpower
             services.AddControllers();
             services.AddDbContext<biContext>(opt =>opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<Seeder>();
+            services.AddTransient<IMailer, Mailer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
