@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using BIpower.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using BIpower.Services;
 
 namespace BIpower
@@ -28,6 +29,20 @@ namespace BIpower
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+             services.AddCors(options =>
+            {
+                options.AddPolicy("MyPolicy",
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin() 
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                        
+                    });
+            });
+            services.AddMvc();
             services.AddControllers();
             services.AddDbContext<biContext>(opt =>opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<Seeder>();
@@ -41,10 +56,12 @@ namespace BIpower
             {
                 app.UseDeveloperExceptionPage();
             }
+           
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+             app.UseCors("MyPolicy");
 
             app.UseAuthorization();
 
