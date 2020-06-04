@@ -3,10 +3,12 @@ using System.Linq;
 using BIpower.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Cors;
 using BIpower.Services;
 
 namespace BIpower.Controllers
 {
+    [EnableCors("MyPolicy")]
     [Route("api/[controller]")]
     public class OrderController : Controller
     {
@@ -24,12 +26,13 @@ namespace BIpower.Controllers
         {
             var orders = _db.Orders.Include(c => c.Customer).OrderByDescending(x => x.OrderPlaced);
             var page = new Pager<Order>(orders, pageNumber, pageSize);
+            var res = page.Data;
 
             double totalPages = page.Total / pageSize;
 
             var response = new
             {
-                Page = page,
+                Page = res,
                 TotalPages = totalPages
             };
             return Ok(response);
